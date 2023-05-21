@@ -1,5 +1,6 @@
 const http = require("http");
 const client = require('./db.js')
+const { pool } = require("./db");
 
 const host = 'localhost';
 const port = 8000;
@@ -21,6 +22,20 @@ const requestListener = function(request, response) {
 					})
 					response.end('Received: ' + body)
 				})
+				
+
+				const locationID = 1220;
+				const locationAddress = "Mela-Köhler-Straße 8, 1220 Wien";
+				const currentTemp = 9;
+				  try {
+					  pool.query(
+					      "INSERT INTO measured_data (locationID, locationAddress,currentTemp) VALUES ($1, $2, $3)",
+					      [locationID, locationAddress, currentTemp]
+					    );
+					  console.log(`Added a data point. LocationId: ${locationID}, locationAddress: ${locationAddress}, currentTemp: ${locationID}`);
+					  } catch (error) {
+					    console.error(error)
+					  }
 			} else {
 				response.end(JSON.stringify({
 					message: "Telemetry Endpoint found, but I only accept POST method"

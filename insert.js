@@ -13,5 +13,3 @@ async function insertData() {
   }
 }
 
-insertData();
-
