@@ -1,9 +1,13 @@
 const http = require("http");
 const client = require('./db.js')
-const {pool} = require("./db");
+const { pool } = require("./db");
 
 const host = 'localhost';
 const port = 8000;
+
+// basic authentication
+var setUsername = "username";
+var setPassword = "password";
 
 // Ajv library is used to validate data against json schema
 const Ajv = require("ajv");
@@ -24,54 +28,70 @@ const requestListener = function(request, response) {
     switch (request.url) {
         case "/telemetry":
 
-            if (request.method == 'POST') {
+	    //get the username and password from the request and check it
+            var encoded = request.headers.authorization.split(' ')[1];
+            var decoded = Buffer.from(encoded, 'base64').toString();
+            var username = decoded.split(':')[0];
+            var password = decoded.split(':')[1];
+            if (username == setUsername && password == setPassword) {
 
-                var body = ''
-                request.on('data', function(data) {
-                    body += data
-                })
-                request.on('end', function() {
+                if (request.method == 'POST') {
 
-                    // run data against schema defined in telemetrySchema.js
-                    const parsedRequest = JSON.parse(body);
-                    const isValidEntry = ajv.validate(telemetrySchema, parsedRequest);
-                    if (isValidEntry) {
-                        console.log("Valid POST request.");
+                    var body = ''
+                    request.on('data', function(data) {
+                        body += data
+                    })
+                    request.on('end', function() {
 
-                        //insert into DB
+                        // run data against schema defined in telemetrySchema.js
+                        const parsedRequest = JSON.parse(body);
+                        const isValidEntry = ajv.validate(telemetrySchema, parsedRequest);
+                        if (isValidEntry) {
+                            console.log("Valid POST request.");
 
-                        try {
-                            pool.query(
-                                "INSERT INTO measured_data (locationID, locationAddress,currentTemp) VALUES ($1, $2, $3)",
-                                [parsedRequest.locationID, parsedRequest.locationAddress, parsedRequest.currentTemp]
-                            );
-                            console.log(`Added a data point. LocationId: ${parsedRequest.locationID}, locationAddress: ${parsedRequest.locationAddress}, currentTemp: ${parsedRequest.currentTemp}`);
-                        } catch (error) {
-                            console.error(error)
+                            //insert into DB
+
+                            try {
+                                pool.query(
+                                    "INSERT INTO measured_data (locationID, locationAddress,currentTemp) VALUES ($1, $2, $3)",
+                                    [parsedRequest.locationID, parsedRequest.locationAddress, parsedRequest.currentTemp]
+                                );
+                                console.log(`Added a data point. LocationId: ${parsedRequest.locationID}, locationAddress: ${parsedRequest.locationAddress}, currentTemp: ${parsedRequest.currentTemp}`);
+                            } catch (error) {
+                                console.error(error)
+                            }
+
+                            response.writeHead(200, {
+                                'Content-Type': 'application/json'
+                            })
+                            response.end('Received: ' + body)
+
+
+
+                        } else {
+                            console.error("Invalid POST request. Errors:", ajv.errors);
+                            response.writeHead(404);
+                            response.end(JSON.stringify({
+                                error: "Data has the wrong format."
+                            }));
                         }
 
-                        response.writeHead(200, {
-                            'Content-Type': 'application/json'
-                        })
-                        response.end('Received: ' + body)
+                    })
 
 
 
-                    } else {
-                        console.error("Invalid POST request. Errors:", ajv.errors);
-                        response.writeHead(404);
-                        response.end(JSON.stringify({
-                            error: "Data has the wrong format."
-                        }));
-                    }
-
-                })
-
-
-
+                } else {
+                    console.error("Telemetry Endpoint found, but I only accept POST method.");
+                    response.writeHead(404);
+                    response.end(JSON.stringify({
+                        message: "Telemetry Endpoint found, but I only accept POST method."
+                    }));
+                }
             } else {
+                console.error("Invalid User or Password");
+                response.writeHead(404);
                 response.end(JSON.stringify({
-                    message: "Telemetry Endpoint found, but I only accept POST method."
+                    error: "Invalid User or Password"
                 }));
             }
 
