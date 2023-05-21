@@ -1,0 +1,25 @@
+{
+  "name": "aht-interview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "db.js",
+  "dependencies": {
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MariaMarusakova/aht-interview_assignment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MariaMarusakova/aht-interview_assignment/issues"
+  },
+  "homepage": "https://github.com/MariaMarusakova/aht-interview_assignment#readme"
+}
