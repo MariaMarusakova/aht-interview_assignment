@@ -4,6 +4,8 @@
   "description": "",
   "main": "db.js",
   "dependencies": {
+    "ajv": "^8.12.0",
+    "avj": "0.0.0",
     "pg": "^8.11.0"
   },
   "devDependencies": {},
