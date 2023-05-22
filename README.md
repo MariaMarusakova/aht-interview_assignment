@@ -56,8 +56,10 @@
 $ cd ../aht-interview
 $ sudo service postgresql start
 $ node server.js
+$ url -X  POST http://localhost:8000/telemetry  -H 'Content-Type: application/json' -d '{"locationID":1220,"locationAddress":"Mela-Köhler-Straße 6, 1220 Wien", "currentTemp":6}' --user "username:password" 
+
 ```
-* In Postman
+* Or test In Postman
   * POST request on URL http://localhost:8000/telemetry
   * Body: {"locationID":1220,"locationAddress":"Mela-Köhler-Straße 16, 1220 Wien","currentTemp":7}
   * Authorisation - Basic Authorisation with username = 'username' and password = 'password' 
