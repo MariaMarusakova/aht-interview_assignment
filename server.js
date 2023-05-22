@@ -1,6 +1,6 @@
 const http = require("http");
 const client = require('./db.js')
-const { pool } = require("./db");
+
 
 const host = 'localhost';
 const port = 8000;
@@ -11,16 +11,9 @@ var setPassword = "password";
 
 // Ajv library is used to validate data against json schema
 const Ajv = require("ajv");
-const telemetrySchema = {
-    type: "object",
-    properties: {
-        locationID: {type: "number"},
-        locationAddress: {type: "string"},
-        currentTemp: {type: "number"},
-        status: {type: "boolean"}
-    },
-    required: ["locationID", "locationAddress", "currentTemp"],
-};
+
+const {telemetrySchema} = require('./schema');
+const {insertIntoDB} = require('./insert');
 
 const requestListener = function(request, response) {
     response.setHeader("Content-Type", "application/json");
@@ -28,7 +21,7 @@ const requestListener = function(request, response) {
     switch (request.url) {
         case "/telemetry":
 
-	    //get the username and password from the request and check it
+            //get the username and password from the request and check it
             var encoded = request.headers.authorization.split(' ')[1];
             var decoded = Buffer.from(encoded, 'base64').toString();
             var username = decoded.split(':')[0];
@@ -47,27 +40,7 @@ const requestListener = function(request, response) {
                         const parsedRequest = JSON.parse(body);
                         const isValidEntry = ajv.validate(telemetrySchema, parsedRequest);
                         if (isValidEntry) {
-                            console.log("Valid POST request.");
-
-                            //insert into DB
-
-                            try {
-                                pool.query(
-                                    "INSERT INTO measured_data (locationID, locationAddress,currentTemp) VALUES ($1, $2, $3)",
-                                    [parsedRequest.locationID, parsedRequest.locationAddress, parsedRequest.currentTemp]
-                                );
-                                console.log(`Added a data point. LocationId: ${parsedRequest.locationID}, locationAddress: ${parsedRequest.locationAddress}, currentTemp: ${parsedRequest.currentTemp}`);
-                            } catch (error) {
-                                console.error(error)
-                            }
-
-                            response.writeHead(200, {
-                                'Content-Type': 'application/json'
-                            })
-                            response.end('Received: ' + body)
-
-
-
+                            insertIntoDB(response, body, parsedRequest.locationID, parsedRequest.locationAddress, parsedRequest.currentTemp);
                         } else {
                             console.error("Invalid POST request. Errors:", ajv.errors);
                             response.writeHead(404);
