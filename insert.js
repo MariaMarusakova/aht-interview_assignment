@@ -1,6 +1,6 @@
 const { pool } = require("./db");
 
-const insertIntoDB = function (response,body,locationID,locationAddress,currentTemp) {
+const insertIntoDB = function (response, body, locationID, locationAddress, currentTemp) {
                             console.log("Valid POST request.");
 
                             //insert into DB
