@@ -6,7 +6,7 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 
-### Assignment
+## Assignment
         1. Write an app that enables data ingestion via simple POST request using POST /telemetry endpoint. 
           a) The endpoint consumes the body
           b) validates the data against expected schema 
@@ -17,7 +17,7 @@
 
 ## Solution
 
-### Technologies used
+### Technologies
  * nodejs
  * avj
  * node-postgres
@@ -52,23 +52,22 @@
       ```
     
 * To run this project:
-1. clone this repository
-2. install dependencies ```$ npm install```
-3. change into project directory ```$ cd aht-interview_assignment```
-4. start db ```$ sudo service postgresql start```
-5. start the server ```$ node server.js```
 
-6.1 To test run ```$ curl -X  POST http://localhost:8000/telemetry  -H 'Content-Type: application/json' -d '{"locationID":1220,"locationAddress":"Mela-Köhler-Straße 6, 1220 Wien", "currentTemp":6}' --user "username:password"``` 
+     - clone this repository
+     - install dependencies ```$ npm install```
+     - change into project directory ```$ cd aht-interview_assignment```
+     - start db ```$ sudo service postgresql start```
+     - start the server ```$ node server.js```
+     - to test run ```$ curl -X  POST http://localhost:8000/telemetry  -H 'Content-Type: application/json' -d '{"locationID":1220,"locationAddress":"Mela-Köhler-Straße 6, 1220 Wien", "currentTemp":6}' --user "username:password"``` 
 
+    - or test In Postman
+        -   POST request on URL http://localhost:8000/telemetry
+        -   Body: {"locationID":1220,"locationAddress":"Mela-Köhler-Straße 16, 1220 Wien","currentTemp":7}
+        -   Authorisation: Basic Authorisation with username = 'username' and password = 'password' 
 
-6.2 Or test In Postman
-  * POST request on URL http://localhost:8000/telemetry
-  * Body: {"locationID":1220,"locationAddress":"Mela-Köhler-Straße 16, 1220 Wien","currentTemp":7}
-  * Authorisation - Basic Authorisation with username = 'username' and password = 'password' 
-
-7. Check the DB 
-```
-$ sudo -u telemetry psql -d telemetry
-telemetry-> SELECT * from measured_data;
-```
+    - check the DB 
+        ```
+        $ sudo -u telemetry psql -d telemetry
+        telemetry-> SELECT * from measured_data;
+        ```
 
