@@ -11,16 +11,7 @@ var setPassword = "password";
 
 // Ajv library is used to validate data against json schema
 const Ajv = require("ajv");
-const telemetrySchema = {
-    type: "object",
-    properties: {
-        locationID: {type: "number"},
-        locationAddress: {type: "string"},
-        currentTemp: {type: "number"},
-        status: {type: "boolean"}
-    },
-    required: ["locationID", "locationAddress", "currentTemp"],
-};
+const { telemetrySchema } = require('./schema');
 
 const requestListener = function(request, response) {
     response.setHeader("Content-Type", "application/json");
