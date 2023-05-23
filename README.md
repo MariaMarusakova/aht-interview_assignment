@@ -54,8 +54,8 @@
 * To run this project:
 
      - clone this repository
-     - install dependencies ```$ npm install```
      - change into project directory ```$ cd aht-interview_assignment```
+     - install dependencies ```$ npm install```
      - start db ```$ sudo service postgresql start```
      - start the server ```$ node server.js```
      - to test run ```$ curl -X  POST http://localhost:8000/telemetry  -H 'Content-Type: application/json' -d '{"locationID":1220,"locationAddress":"Mela-Köhler-Straße 6, 1220 Wien", "currentTemp":6}' --user "username:password"``` 
@@ -70,4 +70,17 @@
         $ sudo -u telemetry psql -d telemetry
         telemetry-> SELECT * from measured_data;
         ```
+        
+ * Notes
+     
+    In case you experience this error: ```error: Ident authentication failed for user "telemetry"```
+        
+    Follow the fix suggested [here](https://serverfault.com/questions/406606/postgres-error-message-fatal-ident-authentication-failed-for-user): first answer, point 4
+        
+    Edit the pg_hba.conf file from ```host all all 127.0.0.1/32 ident``` to ```host all all 127.0.0.1/32 md5```
+
+    Be sure to restart Postgres after updating the pg_hba.conf file. ```sudo service postgresql-12 restart```
+   
+
+        
 
